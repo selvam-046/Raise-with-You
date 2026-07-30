@@ -5,6 +5,7 @@
 Please do not open public issues for security vulnerabilities.
 
 Send a private report with:
+
 - A clear description of the issue
 - Reproduction steps
 - Impact assessment
