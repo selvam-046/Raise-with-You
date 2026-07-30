@@ -8,6 +8,8 @@
     "start": "next start",
     "lint": "next lint",
     "typecheck": "tsc --noEmit",
+    "test": "node --test",
+    "check": "npm run lint && npm run typecheck && npm run test",
     "vapid": "web-push generate-vapid-keys"
   },
   "dependencies": {
@@ -19,9 +21,12 @@
     "web-push": "^3.6.7"
   },
   "devDependencies": {
+    "@eslint/js": "^10.0.1",
     "@types/node": "^22.13.10",
     "@types/react": "^19.0.10",
     "@types/web-push": "^3.6.4",
+    "eslint": "^10.8.0",
+    "globals": "^17.8.0",
     "typescript": "^5.8.2"
   }
 }
