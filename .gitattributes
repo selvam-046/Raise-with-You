@@ -1,0 +1,14 @@
+* text=auto eol=lf
+
+# Keep scripts with platform-friendly endings when needed
+*.bat text eol=crlf
+*.ps1 text eol=crlf
+
+# Binary assets
+*.png binary
+*.jpg binary
+*.jpeg binary
+*.gif binary
+*.webp binary
+*.ico binary
+*.pdf binary
