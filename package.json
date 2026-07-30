@@ -1,0 +1,20 @@
+{
+  "name": "raise-with-you",
+  "version": "0.1.0",
+  "private": true,
+  "description": "Baseline Node project for Raise-with-You repository quality gates.",
+  "type": "module",
+  "engines": {
+    "node": ">=20"
+  },
+  "scripts": {
+    "lint": "eslint .",
+    "build": "npm run lint && npm run test",
+    "test": "node --test"
+  },
+  "devDependencies": {
+    "@eslint/js": "^9.39.0",
+    "eslint": "^9.39.0",
+    "globals": "^16.4.0"
+  }
+}
