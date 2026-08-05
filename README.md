@@ -66,27 +66,27 @@ flowchart LR
 
 ## Feature Matrix
 
-| Domain | Capability | Notes |
-| --- | --- | --- |
-| Authentication | Email/password sign-up and sign-in | Auth callbacks finalize sessions at `/auth/callback` |
-| Task lifecycle | Create, complete, delete | Server actions with optimistic UI updates |
-| Live updates | Cross-tab/device task sync | Powered by Supabase Realtime publication on `tasks` |
-| Reminders | Due-within-1-hour scanner | Protected cron route + idempotent claim/retry pattern |
-| Push onboarding | Native browser enrollment | Validates VAPID key compatibility and secure context |
-| PWA behavior | Installable shell + service worker | Notification click focuses existing client window |
-| Health checks | Lightweight status route | `/api/health` returns status + timestamp |
+| Domain          | Capability                         | Notes                                                 |
+| --------------- | ---------------------------------- | ----------------------------------------------------- |
+| Authentication  | Email/password sign-up and sign-in | Auth callbacks finalize sessions at `/auth/callback`  |
+| Task lifecycle  | Create, complete, delete           | Server actions with optimistic UI updates             |
+| Live updates    | Cross-tab/device task sync         | Powered by Supabase Realtime publication on `tasks`   |
+| Reminders       | Due-within-1-hour scanner          | Protected cron route + idempotent claim/retry pattern |
+| Push onboarding | Native browser enrollment          | Validates VAPID key compatibility and secure context  |
+| PWA behavior    | Installable shell + service worker | Notification click focuses existing client window     |
+| Health checks   | Lightweight status route           | `/api/health` returns status + timestamp              |
 
 ## Technology Stack
 
-| Layer | Tooling |
-| --- | --- |
-| Frontend | React 19, Next.js App Router |
-| Backend runtime | Next.js route handlers + server actions |
-| Data/Auth | Supabase Postgres + Supabase Auth + `@supabase/ssr` |
-| Real-time | Supabase Realtime publication |
-| Push | `web-push` with VAPID keys |
-| Scheduling | Vercel Cron (and optional Supabase `pg_cron` SQL scheduler) |
-| Quality | ESLint, TypeScript, Node test runner |
+| Layer           | Tooling                                                     |
+| --------------- | ----------------------------------------------------------- |
+| Frontend        | React 19, Next.js App Router                                |
+| Backend runtime | Next.js route handlers + server actions                     |
+| Data/Auth       | Supabase Postgres + Supabase Auth + `@supabase/ssr`         |
+| Real-time       | Supabase Realtime publication                               |
+| Push            | `web-push` with VAPID keys                                  |
+| Scheduling      | Vercel Cron (and optional Supabase `pg_cron` SQL scheduler) |
+| Quality         | ESLint, TypeScript, Node test runner                        |
 
 ## Repository Map
 
@@ -268,16 +268,16 @@ This gives at-least-once attempt semantics without duplicate sends under overlap
 
 Start from `.env.example`.
 
-| Variable | Required | Scope | Description |
-| --- | --- | --- | --- |
-| `NEXT_PUBLIC_SUPABASE_URL` | Yes | Browser + Server | Supabase project URL |
-| `NEXT_PUBLIC_SUPABASE_PUBLISHABLE_KEY` | Yes | Browser + Server | Supabase anon/publishable key |
-| `SUPABASE_SERVICE_ROLE_KEY` | Yes (prod) | Server only | Admin-level DB access for cron + push pruning |
-| `NEXT_PUBLIC_VAPID_PUBLIC_KEY` | Yes | Browser + Server | Public key for PushManager subscribe |
-| `VAPID_PRIVATE_KEY` | Yes | Server only | Private key for message signing |
-| `VAPID_SUBJECT` | Recommended | Server only | Contact URI, e.g. `mailto:ops@example.com` |
-| `CRON_SECRET` | Yes (prod) | Server only | Bearer secret for protected cron route |
-| `NEXT_DIST_DIR` | Optional | Build | Override Next output directory |
+| Variable                               | Required    | Scope            | Description                                   |
+| -------------------------------------- | ----------- | ---------------- | --------------------------------------------- |
+| `NEXT_PUBLIC_SUPABASE_URL`             | Yes         | Browser + Server | Supabase project URL                          |
+| `NEXT_PUBLIC_SUPABASE_PUBLISHABLE_KEY` | Yes         | Browser + Server | Supabase anon/publishable key                 |
+| `SUPABASE_SERVICE_ROLE_KEY`            | Yes (prod)  | Server only      | Admin-level DB access for cron + push pruning |
+| `NEXT_PUBLIC_VAPID_PUBLIC_KEY`         | Yes         | Browser + Server | Public key for PushManager subscribe          |
+| `VAPID_PRIVATE_KEY`                    | Yes         | Server only      | Private key for message signing               |
+| `VAPID_SUBJECT`                        | Recommended | Server only      | Contact URI, e.g. `mailto:ops@example.com`    |
+| `CRON_SECRET`                          | Yes (prod)  | Server only      | Bearer secret for protected cron route        |
+| `NEXT_DIST_DIR`                        | Optional    | Build            | Override Next output directory                |
 
 ## Local Development
 
@@ -291,35 +291,34 @@ Start from `.env.example`.
 
 1. Install dependencies:
 
-    ```bash
-    npm install
-    ```
+   ```bash
+   npm install
+   ```
 
 2. Configure env:
 
-    ```bash
-    copy .env.example .env.local
-    ```
+   ```bash
+   copy .env.example .env.local
+   ```
 
 3. Generate VAPID keys:
 
-    ```bash
-    npm run vapid
-    ```
+   ```bash
+   npm run vapid
+   ```
 
 4. Add generated keys to `.env.local`.
 
 5. Apply migrations in order:
-
-    - `supabase/migrations/0001_nexus_tasks.sql`
-    - `supabase/migrations/0002_enable_task_realtime.sql`
-    - `supabase/migrations/0003_setup_cron.sql` (optional if you schedule externally)
+   - `supabase/migrations/0001_nexus_tasks.sql`
+   - `supabase/migrations/0002_enable_task_realtime.sql`
+   - `supabase/migrations/0003_setup_cron.sql` (optional if you schedule externally)
 
 6. Start development server:
 
-    ```bash
-    npm run dev
-    ```
+   ```bash
+   npm run dev
+   ```
 
 7. Open `http://localhost:3000`.
 
@@ -341,12 +340,12 @@ Example cron entry:
 
 ```json
 {
-   "crons": [
-      {
-         "path": "/api/cron/check-deadlines",
-         "schedule": "*/10 * * * *"
-      }
-   ]
+  "crons": [
+    {
+      "path": "/api/cron/check-deadlines",
+      "schedule": "*/10 * * * *"
+    }
+  ]
 }
 ```
 
@@ -369,13 +368,13 @@ Example cron entry:
 
 - `GET /api/health` should return:
 
-   ```json
-   {
-      "status": "ok",
-      "service": "nexus-tasks",
-      "timestamp": "..."
-   }
-   ```
+  ```json
+  {
+    "status": "ok",
+    "service": "nexus-tasks",
+    "timestamp": "..."
+  }
+  ```
 
 ### Manual scanner invocation
 
@@ -395,14 +394,14 @@ Expected response:
 ### Incident response quick actions
 
 1. Push failures spike:
-    - Check VAPID key consistency between frontend public key and server private key.
-    - Inspect network path to browser push gateways.
+   - Check VAPID key consistency between frontend public key and server private key.
+   - Inspect network path to browser push gateways.
 2. No reminders firing:
-    - Verify scheduler is active.
-    - Confirm bearer secret matches.
-    - Confirm task due times are in future and within scanner window.
+   - Verify scheduler is active.
+   - Confirm bearer secret matches.
+   - Confirm task due times are in future and within scanner window.
 3. Users seeing setup error:
-    - Apply migration `0001_nexus_tasks.sql`.
+   - Apply migration `0001_nexus_tasks.sql`.
 
 ## Testing And Quality Gates
 
@@ -481,8 +480,8 @@ Current tuning defaults:
 - Scanner reads max `200` due candidates per run.
 - Push sends fan out with `Promise.allSettled` across user subscriptions.
 - Indexes optimize:
-   - Open tasks by user/due ordering.
-   - Unsent reminder scanning.
+  - Open tasks by user/due ordering.
+  - Unsent reminder scanning.
 
 If workloads grow:
 
