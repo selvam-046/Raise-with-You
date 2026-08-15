@@ -1,7 +1,7 @@
 'use client'
 
 import { useEffect, useState } from 'react'
-import { savePushSubscription } from '@/app/actions/subscriptions'
+import { savePushSubscription, sendTestPushNotification } from '@/app/actions/subscriptions'
 
 type Status = 'checking' | 'ready' | 'loading' | 'enabled' | 'denied' | 'unsupported' | 'error'
 
@@ -83,6 +83,20 @@ export function PushRegister({ disabledReason }: { disabledReason?: string | nul
     }
   }
 
+  async function sendTest() {
+    setStatus('loading')
+    setErrorMessage('')
+    try {
+      await sendTestPushNotification()
+      setStatus('enabled')
+      setErrorMessage('Test alert sent. Check this device now.')
+    } catch (error) {
+      setStatus('error')
+      setErrorMessage(error instanceof Error ? error.message : 'We could not send a test alert. Please try again.')
+    }
+  }
+
+  if (['enabled'].includes(status)) return <button className="push-status success" onClick={sendTest}>{errorMessage || 'Secure device alerts active - Send test'}</button>
   if (status === 'checking') return <div className="push-status muted">Checking device support…</div>
   if (status === 'enabled') return <div className="push-status success"><span>●</span> Secure device alerts active</div>
   if (status === 'unsupported') return <div className="push-status muted">Push isn’t available in this browser or environment.</div>

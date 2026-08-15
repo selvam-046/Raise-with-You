@@ -145,7 +145,7 @@ supabase/migrations/
 ### 3) Reminder path
 
 1. Cron invokes `/api/cron/check-deadlines` with bearer token.
-2. Route scans due tasks in the next hour where `reminder_sent_at IS NULL`.
+2. Route scans recently due tasks that have not been sent yet.
 3. Each row is claimed atomically before push dispatch.
 4. Push send fan-outs across all user subscriptions.
 5. Stale endpoints are deleted.
@@ -203,7 +203,7 @@ sequenceDiagram
    participant S as Service Worker
 
    C->>A: GET + Authorization Bearer CRON_SECRET
-   A->>D: Select due tasks (next 60 min, unclaimed)
+   A->>D: Select recently due tasks (unclaimed)
    loop each candidate
       A->>D: Update reminder_sent_at where null (claim)
       alt claim successful
@@ -236,7 +236,7 @@ Scanner route: `app/api/cron/check-deadlines/route.ts`
 Important behavior:
 
 - Authorization hard-stop: missing/wrong bearer returns `401`.
-- Window: due between `now` and `now + 60 minutes`.
+- Window: due in the previous 15 minutes, which allows for a delayed cron run.
 - Batch limit: up to `200` candidates per invocation.
 - Idempotent claim: update predicate requires `reminder_sent_at IS NULL`.
 - Retry model: if push dispatch fails after claim, claim is released.
@@ -325,6 +325,8 @@ Start from `.env.example`.
 ### Local push notes
 
 - Push requires secure context; localhost is an accepted exception.
+- While `npm run dev` is running, a local scheduler checks every 30 seconds.
+  This sends Web Push even after the dashboard/browser window is closed.
 - If enrollment fails with `AbortError`, the browser likely cannot reach its own push gateway (VPN/proxy/ad blocker/network path issue).
 
 ## Deployment On Vercel + Supabase
@@ -334,7 +336,7 @@ Start from `.env.example`.
 1. Import repository.
 2. Set all env vars from `.env.local` in project settings.
 3. Configure `CRON_SECRET` in Vercel and app env to the same value.
-4. Ensure cron configuration exists in `vercel.json` (currently empty in this repo).
+4. Ensure the cron configuration in `vercel.json` is deployed with the app.
 
 Example cron entry:
 
@@ -343,7 +345,7 @@ Example cron entry:
   "crons": [
     {
       "path": "/api/cron/check-deadlines",
-      "schedule": "*/10 * * * *"
+      "schedule": "* * * * *"
     }
   ]
 }

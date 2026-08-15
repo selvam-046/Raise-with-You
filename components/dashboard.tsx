@@ -44,6 +44,36 @@ export function Dashboard({ userId, userEmail, initialTasks, setupError }: { use
     return () => { void supabase.removeChannel(channel) }
   }, [router, setupError, userId])
 
+  // Vercel Cron does not run while developing on localhost. Schedule a native
+  // notification in the open dashboard as well, so a task set for (for
+  // example) 8:56 PM alerts at 8:56 PM instead of waiting for a server scan.
+  // Production still uses the server-side scanner for reminders when the app
+  // is closed.
+  useEffect(() => {
+    if (Notification.permission !== 'granted' || !('serviceWorker' in navigator)) return
+
+    const timers = tasks
+      .filter((task) => !task.is_completed)
+      .map((task) => {
+        const delay = new Date(task.due_at).valueOf() - Date.now()
+        if (delay <= 0 || delay > 2_147_483_647) return undefined
+
+        return window.setTimeout(() => {
+          void navigator.serviceWorker.ready.then((registration) =>
+            registration.showNotification('Task due now', {
+              body: `“${task.title}” is due now.`,
+              icon: '/icon.svg',
+              badge: '/icon.svg',
+              tag: `task-${task.id}`,
+              data: { url: '/dashboard' },
+            }),
+          )
+        }, delay)
+      })
+
+    return () => timers.forEach((timer) => { if (timer !== undefined) window.clearTimeout(timer) })
+  }, [tasks])
+
   const visibleTasks = useMemo(() => tasks.filter((task) => filter === 'all' ? true : filter === 'active' ? !task.is_completed : task.is_completed), [tasks, filter])
   const activeCount = tasks.filter((task) => !task.is_completed).length
   const dueToday = tasks.filter((task) => !task.is_completed && dueState(task.due_at, false) === 'today').length
