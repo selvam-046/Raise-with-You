@@ -6,3 +6,4 @@ import { sum } from "../src/index.js";
 test("sum adds two numbers", () => {
   assert.equal(sum(2, 3), 5);
 });
+
