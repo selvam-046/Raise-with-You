@@ -13,6 +13,9 @@ out/
 .env*.local
 !.env.example
 
+# Supabase CLI local project-link metadata
+supabase/.temp/
+
 # Logs
 *.log
 npm-debug.log*
